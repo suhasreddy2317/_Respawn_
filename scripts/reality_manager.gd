@@ -47,6 +47,9 @@ func register_player(player: CharacterBody2D) -> void:
 	_active_player = player
 
 func _unhandled_input(event: InputEvent) -> void:
+	if get_tree().paused:
+		return
+
 	if event.is_action_pressed("switch_reality"):
 		toggle_reality()
 		get_viewport().set_input_as_handled()
