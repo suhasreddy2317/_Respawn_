@@ -43,6 +43,7 @@ var _is_paused: bool = false
 
 func _ready() -> void:
 	_ensure_background()
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	reality_manager = get_node_or_null("/root/RealityManager")
 	if reality_manager:
 		reality_manager.reality_changed.connect(_on_reality_changed)
@@ -65,6 +66,9 @@ func _ensure_background() -> void:
 		move_child(backdrop, 0)
 
 func _process(delta: float) -> void:
+	if _is_paused:
+		return
+
 	_level_timer += delta
 	if _checkpoint_banner_timer > 0.0:
 		_checkpoint_banner_timer -= delta
@@ -75,10 +79,11 @@ func _process(delta: float) -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and not event.echo:
-		if event.keycode == KEY_R or event.physical_keycode == KEY_R:
-			get_tree().reload_current_scene()
-		elif event.keycode == KEY_ESCAPE:
+		if event.keycode == KEY_ESCAPE or event.physical_keycode == KEY_ESCAPE:
 			_toggle_pause()
+			get_viewport().set_input_as_handled()
+		elif not _is_paused and (event.keycode == KEY_R or event.physical_keycode == KEY_R):
+			get_tree().reload_current_scene()
 
 func _toggle_pause() -> void:
 	_is_paused = not _is_paused
@@ -92,6 +97,7 @@ func _toggle_pause() -> void:
 func _build_facility_chambers() -> void:
 	var facility: Node2D = Node2D.new()
 	facility.name = "ResearchFacility"
+	facility.process_mode = Node.PROCESS_MODE_PAUSABLE
 	add_child(facility)
 
 	# --- CHAMBER 1: Dimensional Calibration (X: 0 to 800) ---
@@ -402,6 +408,7 @@ func _spawn_player() -> void:
 	player = PuzzlePlayer.new()
 	player.name = "Player"
 	player.position = checkpoints[0]
+	player.process_mode = Node.PROCESS_MODE_PAUSABLE
 	player.player_died.connect(_on_player_died)
 	player.player_respawned.connect(_on_player_respawned)
 	add_child(player)
@@ -414,6 +421,7 @@ func _spawn_player() -> void:
 func _build_ui_hud() -> void:
 	ui_layer = CanvasLayer.new()
 	ui_layer.name = "SciFiHUD"
+	ui_layer.process_mode = Node.PROCESS_MODE_ALWAYS
 	add_child(ui_layer)
 
 	var root: Control = Control.new()
@@ -589,6 +597,57 @@ func _build_ui_hud() -> void:
 	v_desc.add_theme_font_size_override("font_size", 15)
 	v_vbox.add_child(v_desc)
 
+	# Pause Menu
+	pause_menu = CenterContainer.new()
+	pause_menu.name = "PauseMenu"
+	pause_menu.set_anchors_preset(Control.PRESET_FULL_RECT)
+	pause_menu.visible = false
+	pause_menu.z_index = 1100
+	root.add_child(pause_menu)
+
+	var pause_panel: PanelContainer = PanelContainer.new()
+	var pause_style: StyleBoxFlat = StyleBoxFlat.new()
+	pause_style.bg_color = Color(0.08, 0.1, 0.15, 0.97)
+	pause_style.border_color = RealityManager.COLOR_REALITY_A_PRIMARY
+	pause_style.border_width_left = 2
+	pause_style.border_width_right = 2
+	pause_style.border_width_top = 2
+	pause_style.border_width_bottom = 2
+	pause_style.content_margin_left = 40
+	pause_style.content_margin_right = 40
+	pause_style.content_margin_top = 28
+	pause_style.content_margin_bottom = 28
+	pause_panel.add_theme_stylebox_override("panel", pause_style)
+	pause_menu.add_child(pause_panel)
+
+	var pause_vbox: VBoxContainer = VBoxContainer.new()
+	pause_panel.add_child(pause_vbox)
+
+	var pause_title: Label = Label.new()
+	pause_title.text = "PAUSED"
+	pause_title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	pause_title.add_theme_font_size_override("font_size", 28)
+	pause_title.add_theme_color_override("font_color", RealityManager.COLOR_REALITY_A_PRIMARY)
+	pause_vbox.add_child(pause_title)
+
+	var pause_spacer: Control = Control.new()
+	pause_spacer.custom_minimum_size = Vector2(0, 12)
+	pause_vbox.add_child(pause_spacer)
+
+	var resume_btn: Button = Button.new()
+	resume_btn.text = "RESUME"
+	resume_btn.custom_minimum_size = Vector2(200, 42)
+	resume_btn.add_theme_font_size_override("font_size", 16)
+	resume_btn.pressed.connect(_resume_game)
+	pause_vbox.add_child(resume_btn)
+
+	var restart_btn: Button = Button.new()
+	restart_btn.text = "RESTART"
+	restart_btn.custom_minimum_size = Vector2(200, 42)
+	restart_btn.add_theme_font_size_override("font_size", 16)
+	restart_btn.pressed.connect(_restart_game)
+	pause_vbox.add_child(restart_btn)
+
 	# Bottom Controls Hint
 	var bot_margin: MarginContainer = MarginContainer.new()
 	bot_margin.set_anchors_preset(Control.PRESET_BOTTOM_WIDE)
@@ -601,6 +660,17 @@ func _build_ui_hud() -> void:
 	hint_lbl.add_theme_font_size_override("font_size", 13)
 	hint_lbl.add_theme_color_override("font_color", Color(0.65, 0.72, 0.85))
 	bot_margin.add_child(hint_lbl)
+
+func _resume_game() -> void:
+	_is_paused = false
+	get_tree().paused = false
+	if pause_menu:
+		pause_menu.visible = false
+
+func _restart_game() -> void:
+	_is_paused = false
+	get_tree().paused = false
+	get_tree().reload_current_scene()
 
 func _update_active_chamber_objective() -> void:
 	if not player or not is_instance_valid(player):
