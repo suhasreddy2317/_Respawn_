@@ -8,7 +8,7 @@ extends Area2D
 signal powered_changed(is_powered: bool)
 
 ## Dimensions of the receiver for hit detection and rendering
-@export var receiver_size: Vector2 = Vector2(48, 48)
+@export var receiver_size: Vector2 = Vector2(56, 56)
 
 ## Active powered indicator color
 @export var powered_color: Color = Color(0.25, 0.95, 0.65, 1.0)

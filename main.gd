@@ -9,6 +9,7 @@ extends Node2D
 
 var reality_manager: Node = null
 var player: CharacterBody2D = null
+var backdrop: Node2D = null
 
 # Chamber References
 var chamber_doors: Array[PuzzleDoor] = []
@@ -41,6 +42,7 @@ var _checkpoint_banner_timer: float = 0.0
 var _is_paused: bool = false
 
 func _ready() -> void:
+	_ensure_background()
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	reality_manager = get_node_or_null("/root/RealityManager")
 	if reality_manager:
@@ -51,6 +53,17 @@ func _ready() -> void:
 	_spawn_player()
 	_build_ui_hud()
 	_update_hud_state()
+
+func _ensure_background() -> void:
+	backdrop = get_node_or_null("ParallaxBackdrop")
+	if not backdrop:
+		var scene: PackedScene = load("res://scenes/environment/parallax_backdrop.tscn")
+		if scene:
+			backdrop = scene.instantiate()
+			backdrop.name = "ParallaxBackdrop"
+			add_child(backdrop)
+	if backdrop:
+		move_child(backdrop, 0)
 
 func _process(delta: float) -> void:
 	if _is_paused:
@@ -145,12 +158,12 @@ func _build_chamber_2(parent: Node2D) -> void:
 	emitter_c2.mode = LaserEmitter.LaserMode.STATIC
 	parent.add_child(emitter_c2)
 
-	# 2. Lethal burning hazard laser (BURNS and vaporizes player on touch)
+	# 2. Lethal burning hazard laser in bottom pit trench (incinerates falls into the abyss)
 	var emitter_hazard: LaserEmitter = LaserEmitter.new()
 	emitter_hazard.name = "Chamber2_BurningLaserHazard"
-	emitter_hazard.position = Vector2(1000, 520)
+	emitter_hazard.position = Vector2(1170, 570) # Positioned down in the pit chasm, safe on floor
 	emitter_hazard.laser_direction = Vector2.RIGHT
-	emitter_hazard.max_range = 600.0
+	emitter_hazard.max_range = 260.0
 	emitter_hazard.burn_player_on_touch = true # Lethal burning laser!
 	emitter_hazard.beam_color = Color(1.0, 0.2, 0.35)
 	emitter_hazard.mode = LaserEmitter.LaserMode.STATIC
@@ -168,18 +181,22 @@ func _build_chamber_2(parent: Node2D) -> void:
 	var mirror_c2: LaserMirror = LaserMirror.new()
 	mirror_c2.name = "Chamber2_Mirror"
 	mirror_c2.position = Vector2(1240, 360)
-	mirror_c2.mirror_angle_degrees = 90.0 # Initially vertical, needs 45 deg rotation!
+	mirror_c2.mirror_angle_degrees = 90.0 # Initially vertical, needs 45 deg rotation to 135 deg!
 	parent.add_child(mirror_c2)
 	chamber_mirrors.append(mirror_c2)
 
-	# Mirror access walkway so player can comfortably stand and interact with mirror
-	_create_static_block(parent, Vector2(1240, 440), Vector2(160, 24))
-	_create_static_block(parent, Vector2(1440, 480), Vector2(140, 24)) # Bridge step towards door
+	# Intermediate safe stepping ledge from Floor 1 (Y=530 -> Y=480 -> Walkway Y=438)
+	_create_static_block(parent, Vector2(1110, 490), Vector2(70, 20))
 
-	# Overhead Optical Receiver (at Y = 160 above the mirror)
+	# Mirror access walkway so player can comfortably stand and interact with mirror
+	_create_static_block(parent, Vector2(1240, 440), Vector2(180, 24))
+	_create_static_block(parent, Vector2(1420, 480), Vector2(120, 24)) # Bridge step towards door
+
+	# Overhead Optical Receiver (at Y = 140 above the mirror)
 	var receiver_c2: LaserReceiver = LaserReceiver.new()
 	receiver_c2.name = "Chamber2_Receiver"
 	receiver_c2.position = Vector2(1240, 140)
+	receiver_c2.receiver_size = Vector2(56, 56)
 	parent.add_child(receiver_c2)
 	chamber_receivers.append(receiver_c2)
 
@@ -191,8 +208,25 @@ func _build_chamber_2(parent: Node2D) -> void:
 	parent.add_child(door_c2)
 	chamber_doors.append(door_c2)
 
-	# Wire receiver to blast door
+	# Visual power conduit line from receiver to door along the ceiling
+	var conduit: Line2D = Line2D.new()
+	conduit.name = "Chamber2_Conduit"
+	conduit.width = 3.0
+	conduit.default_color = Color(0.2, 0.4, 0.55, 0.7)
+	conduit.points = PackedVector2Array([
+		Vector2(1240, 140),
+		Vector2(1240, 35),
+		Vector2(1740, 35),
+		Vector2(1740, 425)
+	])
+	parent.add_child(conduit)
+
+	# Wire receiver to blast door and conduit visual feedback
 	receiver_c2.powered_changed.connect(door_c2.set_powered)
+	receiver_c2.powered_changed.connect(func(is_pow: bool):
+		if conduit and is_instance_valid(conduit):
+			conduit.default_color = Color(0.25, 0.95, 0.65, 0.95) if is_pow else Color(0.2, 0.4, 0.55, 0.7)
+	)
 
 	# Checkpoint 2 Terminal
 	_create_checkpoint_trigger(parent, Vector2(1820, 500), 2)
@@ -261,38 +295,39 @@ func _build_chamber_4(parent: Node2D) -> void:
 	_create_static_block(parent, Vector2(3900, 280), Vector2(20, 620)) # Final right wall
 	_create_static_block(parent, Vector2(3400, 10), Vector2(1000, 20))
 
-	# Timed Laser Hazard Grid
+	# Timed Laser Hazard Grid (passes overhead at Y=330 with clear telegraph)
 	var timed_laser: LaserEmitter = LaserEmitter.new()
 	timed_laser.name = "Chamber4_TimedLaser"
-	timed_laser.position = Vector2(3040, 380)
+	timed_laser.position = Vector2(3040, 330) # Adjusted up from 380 to prevent platform clipping
 	timed_laser.laser_direction = Vector2.RIGHT
 	timed_laser.mode = LaserEmitter.LaserMode.TIMED
-	timed_laser.cycle_dormant_time = 1.0
+	timed_laser.cycle_dormant_time = 1.8 # Generous 3.0s total safe window (1.8s dormant + 1.2s telegraph)
 	timed_laser.cycle_telegraph_time = 1.2
-	timed_laser.cycle_active_time = 1.8
+	timed_laser.cycle_active_time = 1.5
 	parent.add_child(timed_laser)
 
-	# Rotating Sweep Laser
+	# Rotating Sweep Laser (calibrated sweep angle creating safe observation zones on bridge perimeters)
 	var sweep_laser: LaserEmitter = LaserEmitter.new()
 	sweep_laser.name = "Chamber4_SweepLaser"
-	sweep_laser.position = Vector2(3400, 180)
+	sweep_laser.position = Vector2(3400, 160)
 	sweep_laser.laser_direction = Vector2.DOWN
 	sweep_laser.mode = LaserEmitter.LaserMode.ROTATING
-	sweep_laser.sweep_angle_degrees = 35.0
+	sweep_laser.sweep_angle_degrees = 25.0 # Calibrated from 35.0 to provide safe standing pockets
+	sweep_laser.sweep_speed = 0.9 # Fair, readable rhythm
 	parent.add_child(sweep_laser)
 
-	# Dual Reality Elevated Bridges
+	# Dual Reality Elevated Bridges (Comfortably clear overhead timed laser at Y=330)
 	var bridge_c4_a: ShiftableObject = ShiftableObject.new()
 	bridge_c4_a.name = "Chamber4_BridgeA"
-	bridge_c4_a.position = Vector2(3240, 430)
-	bridge_c4_a.object_size = Vector2(120, 22)
+	bridge_c4_a.position = Vector2(3240, 440) # Platform surface at Y=429
+	bridge_c4_a.object_size = Vector2(130, 22)
 	bridge_c4_a.active_reality = RealityManager.Reality.REALITY_A
 	parent.add_child(bridge_c4_a)
 
 	var bridge_c4_b: ShiftableObject = ShiftableObject.new()
 	bridge_c4_b.name = "Chamber4_BridgeB"
-	bridge_c4_b.position = Vector2(3520, 380)
-	bridge_c4_b.object_size = Vector2(120, 22)
+	bridge_c4_b.position = Vector2(3520, 395) # Platform surface at Y=384 (clear of Y=330 beam)
+	bridge_c4_b.object_size = Vector2(130, 22)
 	bridge_c4_b.active_reality = RealityManager.Reality.REALITY_B
 	parent.add_child(bridge_c4_b)
 

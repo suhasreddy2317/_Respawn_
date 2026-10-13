@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 340" width="380" height="340">
+  <defs>
+    <!-- Warm Sunset & Magenta Coronal Flare -->
+    <radialGradient id="riftCorona" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f59e0b" stop-opacity="0.55" />
+      <stop offset="25%" stop-color="#f43f5e" stop-opacity="0.40" />
+      <stop offset="55%" stop-color="#c026d3" stop-opacity="0.22" />
+      <stop offset="80%" stop-color="#7c3aed" stop-opacity="0.08" />
+      <stop offset="100%" stop-color="#040611" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Warm Sunset Celestial Core -->
+    <linearGradient id="riftCore" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fffbeb" />
+      <stop offset="20%" stop-color="#fef08a" />
+      <stop offset="50%" stop-color="#f59e0b" />
+      <stop offset="80%" stop-color="#e11d48" />
+      <stop offset="100%" stop-color="#831843" />
+    </linearGradient>
+
+    <!-- Dimensional Breach Glow -->
+    <linearGradient id="breachGlow" x1="0%" y1="50%" x2="100%" y2="50%">
+      <stop offset="0%" stop-color="#ec4899" stop-opacity="0" />
+      <stop offset="35%" stop-color="#f43f5e" stop-opacity="0.8" />
+      <stop offset="50%" stop-color="#ffffff" stop-opacity="1.0" />
+      <stop offset="65%" stop-color="#f43f5e" stop-opacity="0.8" />
+      <stop offset="100%" stop-color="#a855f7" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+
+  <!-- Giant Coronal Halo -->
+  <circle cx="190" cy="170" r="160" fill="url(#riftCorona)" />
+
+  <!-- Radiating Dimensional Energy Flares -->
+  <g stroke="url(#breachGlow)" stroke-width="2.5" opacity="0.65">
+    <line x1="60" y1="170" x2="320" y2="170" stroke-width="4.0" />
+    <line x1="100" y1="120" x2="280" y2="220" stroke-width="2.0" />
+    <line x1="120" y1="230" x2="260" y2="110" stroke-width="2.0" />
+  </g>
+
+  <!-- Main Sunset / Fractured Solar Disc -->
+  <circle cx="190" cy="170" r="84" fill="url(#riftCore)" filter="drop-shadow(0 0 20px rgba(244, 63, 94, 0.8))" />
+
+  <!-- Dimensional Breach Fault Lines Splitting the Core -->
+  <path d="M 190 86 Q 180 120 195 150 Q 210 175 185 205 Q 175 225 190 254" 
+        stroke="#ffffff" stroke-width="3.5" fill="none" filter="drop-shadow(0 0 6px #f43f5e)" />
+  <path d="M 195 150 Q 230 160 255 155" 
+        stroke="#ffffff" stroke-width="2.2" fill="none" />
+  <path d="M 185 205 Q 150 215 130 200" 
+        stroke="#ffffff" stroke-width="2.0" fill="none" />
+
+  <!-- Shattered Orbital Ring & Debris Fragments -->
+  <g fill="#fde047" opacity="0.85">
+    <!-- Fragment 1 -->
+    <polygon points="105,145 115,140 118,150 108,154" />
+    <!-- Fragment 2 -->
+    <polygon points="275,185 290,178 288,192 272,195" />
+    <!-- Fragment 3 -->
+    <polygon points="145,95 152,90 155,98 147,102" />
+    <!-- Fragment 4 -->
+    <polygon points="230,240 240,235 238,248 226,246" />
+    <!-- Fragment 5 -->
+    <polygon points="80,172 90,168 88,176 78,178" />
+    <!-- Fragment 6 -->
+    <polygon points="305,160 315,156 314,166 303,168" />
+  </g>
+
+  <!-- Inner High-Energy Plasma Glow -->
+  <circle cx="190" cy="170" r="28" fill="#ffffff" opacity="0.4" filter="blur(4px)" />
+</svg>

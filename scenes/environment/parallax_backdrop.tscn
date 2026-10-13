@@ -1,0 +1,75 @@
+[gd_scene format=3 uid="uid://c8m2fpx7k4y8n"]
+
+[ext_resource type="Script" path="res://scenes/environment/parallax_backdrop.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/environment/backgrounds/sky_cosmos.svg" id="2_sky"]
+[ext_resource type="Texture2D" path="res://assets/environment/backgrounds/celestial_moon_a.svg" id="3_moon"]
+[ext_resource type="Texture2D" path="res://assets/environment/backgrounds/celestial_rift_b.svg" id="4_rift"]
+[ext_resource type="Texture2D" path="res://assets/environment/backgrounds/distant_mountains.svg" id="5_mountains"]
+[ext_resource type="Texture2D" path="res://assets/environment/backgrounds/midground_facility.svg" id="6_facility"]
+[ext_resource type="Texture2D" path="res://assets/environment/backgrounds/near_structures.svg" id="7_near"]
+[ext_resource type="Texture2D" path="res://assets/environment/backgrounds/atmospheric_mist.svg" id="8_mist"]
+
+[node name="ParallaxBackdrop" type="Node2D"]
+z_index = -100
+z_as_relative = false
+script = ExtResource("1_script")
+
+[node name="SkyLayer" type="Parallax2D" parent="."]
+scroll_scale = Vector2(0, 0)
+repeat_size = Vector2(1152, 0)
+repeat_times = 5
+z_index = -100
+
+[node name="SkySprite" type="Sprite2D" parent="SkyLayer"]
+texture = ExtResource("2_sky")
+centered = false
+
+[node name="MoonSprite" type="Sprite2D" parent="SkyLayer"]
+position = Vector2(820, 160)
+texture = ExtResource("3_moon")
+
+[node name="RiftSprite" type="Sprite2D" parent="SkyLayer"]
+modulate = Color(1, 1, 1, 0)
+position = Vector2(820, 160)
+texture = ExtResource("4_rift")
+
+[node name="DistantLayer" type="Parallax2D" parent="."]
+scroll_scale = Vector2(0.08, 0.02)
+repeat_size = Vector2(1152, 0)
+repeat_times = 5
+z_index = -80
+
+[node name="DistantSprite" type="Sprite2D" parent="DistantLayer"]
+texture = ExtResource("5_mountains")
+centered = false
+
+[node name="MidgroundLayer" type="Parallax2D" parent="."]
+scroll_scale = Vector2(0.22, 0.05)
+repeat_size = Vector2(1152, 0)
+repeat_times = 5
+z_index = -60
+
+[node name="MidgroundSprite" type="Sprite2D" parent="MidgroundLayer"]
+texture = ExtResource("6_facility")
+centered = false
+
+[node name="NearLayer" type="Parallax2D" parent="."]
+scroll_scale = Vector2(0.45, 0.08)
+repeat_size = Vector2(1152, 0)
+repeat_times = 5
+z_index = -40
+
+[node name="NearSprite" type="Sprite2D" parent="NearLayer"]
+texture = ExtResource("7_near")
+centered = false
+
+[node name="AtmosphereLayer" type="Parallax2D" parent="."]
+scroll_scale = Vector2(0.6, 0.1)
+autoscroll = Vector2(-15, 0)
+repeat_size = Vector2(1152, 0)
+repeat_times = 5
+z_index = -20
+
+[node name="AtmosphereSprite" type="Sprite2D" parent="AtmosphereLayer"]
+texture = ExtResource("8_mist")
+centered = false
