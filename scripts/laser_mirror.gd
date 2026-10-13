@@ -55,6 +55,7 @@ func _process(delta: float) -> void:
 		_interaction_active = (dist <= interaction_radius)
 		if was_active != _interaction_active:
 			queue_redraw()
+		print("[LaserMirror] interaction_active:", _interaction_active)
 
 func _input(event: InputEvent) -> void:
 	if not is_rotatable_by_player or not _interaction_active:
@@ -62,12 +63,14 @@ func _input(event: InputEvent) -> void:
 
 	# Handle interact action (E key)
 	if event.is_action_pressed("interact"):
+		print("[LaserMirror] E key pressed via interact action")
 		rotate_mirror(45.0)
 		get_viewport().set_input_as_handled()
 		return
 
 	# Legacy direct key support
 	if event is InputEventKey and event.pressed and not event.echo and (event.keycode == KEY_E or event.physical_keycode == KEY_E):
+		print("[LaserMirror] E key pressed via direct keycode")
 		rotate_mirror(45.0)
 		get_viewport().set_input_as_handled()
 

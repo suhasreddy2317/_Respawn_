@@ -113,18 +113,16 @@ func _cast_laser_chain() -> void:
 	var current_dir: Vector2 = laser_direction.normalized()
 	var remaining_dist: float = max_range
 	var bounces_left: int = max_bounces
-	var excluded_rids: Array[RID] = []
 
 	while bounces_left >= 0 and remaining_dist > 5.0:
 		var target_pos: Vector2 = current_origin + current_dir * remaining_dist
 		
 		var query: PhysicsRayQueryParameters2D = PhysicsRayQueryParameters2D.create(
-			current_origin + current_dir * 3.0,
+			current_origin + current_dir * 2.0,
 			target_pos
 		)
 		query.collide_with_areas = true
 		query.collide_with_bodies = true
-		query.exclude = excluded_rids
 		
 		var result: Dictionary = space_state.intersect_ray(query)
 		
@@ -168,7 +166,6 @@ func _cast_laser_chain() -> void:
 				current_origin = hit_pos
 				current_dir = reflected_dir
 				bounces_left -= 1
-				excluded_rids = [mirror.get_rid()]
 			else:
 				break
 
