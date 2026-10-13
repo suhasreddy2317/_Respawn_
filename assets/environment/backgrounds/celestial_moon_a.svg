@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 340 340" width="340" height="340">
+  <defs>
+    <!-- Corona Outer Glow -->
+    <radialGradient id="moonGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.45" />
+      <stop offset="40%" stop-color="#0284c7" stop-opacity="0.22" />
+      <stop offset="70%" stop-color="#0369a1" stop-opacity="0.08" />
+      <stop offset="100%" stop-color="#040611" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Moon Disc Surface Gradient -->
+    <linearGradient id="moonSurface" x1="20%" y1="15%" x2="85%" y2="90%">
+      <stop offset="0%" stop-color="#ffffff" />
+      <stop offset="25%" stop-color="#e0f2fe" />
+      <stop offset="60%" stop-color="#bae6fd" />
+      <stop offset="85%" stop-color="#7dd3fc" />
+      <stop offset="100%" stop-color="#38bdf8" />
+    </linearGradient>
+
+    <!-- Maria & Crater Tint -->
+    <radialGradient id="craterDark" cx="40%" cy="40%" r="55%">
+      <stop offset="0%" stop-color="#0284c7" stop-opacity="0.30" />
+      <stop offset="80%" stop-color="#0369a1" stop-opacity="0.55" />
+      <stop offset="100%" stop-color="#0c4a6e" stop-opacity="0.75" />
+    </radialGradient>
+  </defs>
+
+  <!-- Outer Luminous Aura -->
+  <circle cx="170" cy="170" r="165" fill="url(#moonGlow)" />
+
+  <!-- Moon Base Sphere -->
+  <circle cx="170" cy="170" r="92" fill="url(#moonSurface)" filter="drop-shadow(0 0 16px rgba(56, 189, 248, 0.7))" />
+
+  <!-- Lunar Maria (Dark Basalt Plains) -->
+  <path d="M 125 120 Q 145 105 165 115 Q 185 130 175 155 Q 160 170 135 160 Q 115 145 125 120 Z" fill="url(#craterDark)" />
+  <path d="M 175 165 Q 200 155 220 170 Q 230 195 210 215 Q 185 225 170 205 Q 160 185 175 165 Z" fill="url(#craterDark)" />
+  <path d="M 110 180 Q 130 175 140 190 Q 145 210 130 225 Q 110 230 100 210 Q 95 190 110 180 Z" fill="url(#craterDark)" />
+
+  <!-- Prominent Impact Craters -->
+  <!-- Tycho-style Crater 1 -->
+  <circle cx="140" cy="215" r="9" fill="#0284c7" opacity="0.45" />
+  <circle cx="140" cy="215" r="9" stroke="#ffffff" stroke-width="1.2" fill="none" opacity="0.65" />
+  <circle cx="138" cy="214" r="2.5" fill="#ffffff" opacity="0.8" />
+
+  <!-- Crater 2 -->
+  <circle cx="195" cy="140" r="12" fill="#0284c7" opacity="0.4" />
+  <circle cx="195" cy="140" r="12" stroke="#ffffff" stroke-width="1.5" fill="none" opacity="0.7" />
+  <circle cx="193" cy="138" r="3.5" fill="#ffffff" opacity="0.8" />
+
+  <!-- Crater 3 -->
+  <circle cx="215" cy="195" r="7" fill="#0369a1" opacity="0.5" />
+  <circle cx="215" cy="195" r="7" stroke="#e0f2fe" stroke-width="1.0" fill="none" opacity="0.6" />
+
+  <!-- Soft Crescent Shadow overlay for 3D sphericity -->
+  <path d="M 170 78 A 92 92 0 0 1 245 225 A 92 92 0 0 0 170 78 Z" fill="#082f49" opacity="0.22" />
+</svg>
