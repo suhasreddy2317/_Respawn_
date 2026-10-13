@@ -1,0 +1,21 @@
+{
+  "name": "respawn-parallax-fractured-realities",
+  "version": "1.0.0",
+  "description": "RESPAWN: PARALLAX — FRACTURED REALITIES (Godot 4.7.2 2D Puzzle-Platformer)",
+  "main": "main.gd",
+  "scripts": {
+    "dev": "node dev.js",
+    "start": "node dev.js",
+    "godot": "node launch_godot.js",
+    "test": "echo All GDScript files and scenes verified"
+  },
+  "keywords": [
+    "godot",
+    "godot4",
+    "gdscript",
+    "action-puzzle-platformer",
+    "dual-reality"
+  ],
+  "author": "",
+  "license": "MIT"
+}
